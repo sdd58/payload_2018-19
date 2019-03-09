@@ -1,5 +1,5 @@
 
-import imu_reg.py as reg
+from imu_reg import *
 
 xgAddr = 0x6B
 mAddr  = 0x1E
@@ -105,8 +105,8 @@ def LSM9DS1_begin():
 
     I2C = initI2C()
 
-    who_am_i_XG = I2C.read_byte_data(xgAddr,reg.WHO_AM_I_XG)
-    who_am_i_M  = I2C.read_byte_data(mAddr, reg.WHO_AM_I_M)
+    who_am_i_XG = I2C.read_byte_data(xgAddr,WHO_AM_I_XG)
+    who_am_i_M  = I2C.read_byte_data(mAddr, WHO_AM_I_M)
 
     if ( who_am_i_XG != WHO_AM_I_AG_RSP | who_am_i_M != WHO_AM_I_M_RSP):
         return False
