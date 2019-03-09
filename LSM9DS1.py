@@ -5,7 +5,7 @@ from enum import Enum
 xgAddr = 0x6B
 mAddr  = 0x1E
 
-def LSM9DS1_init(interface, xgAddr, mAddr):
+def init(interface, xgAddr, mAddr):
     
     settings.device.commInterface = interface
 	settings.device.agAddress = xgAddr
@@ -95,7 +95,7 @@ def LSM9DS1_init(interface, xgAddr, mAddr):
 
     _autoCalc = false
 
-def LSM9DS1_begin():
+def begin():
 
     constrainScales()
 	# Once we have the scale values, we can calculate the resolution
@@ -154,6 +154,57 @@ def initAccel():
 	I2C.write_byte_data(xgAddr, CTRL_REG7_XL, tempRegValue)
 
 	
+def calibrate(autoCalc):
+
+	data = [0, 0, 0, 0, 0, 0]
+	samples = 0
+
+	aBiasRawTemp = [0, 0, 0]
+	gBiasRawTemp = [0, 0, 0]
+
+	enableFIFO(True)
+	setFIFO(FIFO_THS, 0x1F)
+	while (samples < 0x1F):
+		samples = I2C.read_byte_data(xgAddr, FIFO_SRC) & 0x3F
+	
+	for ii in samples:
+		readGyro()
+		gBiasRawTemp[0] += gx
+		gBiasRawTemp[1] += gy
+		gBiasRawTemp[2] += gz
+		readAccel()
+		aBiasRawTemp[0] += ax
+		aBiasRawTemp[1] += ay
+		aBiasRawTemp[2] += az - (int16_t)(1./aRes) #Assumes sensor facing up!
+
+	for ii in range(3):
+		gBiasRaw[ii] = gBiasRawTemp[ii] / samples
+		gBias[ii] = calcGyro(gBiasRaw[ii])
+		aBiasRaw[ii] = aBiasRawTemp[ii] / samples
+		aBias[ii] = calcAccel(aBiasRaw[ii])
+
+	enableFIFO(False)
+	setFIFO(FIFO_OFF,0x00)
+
+	if (autoCalc):
+		_autoCalc = True
+
+def readAccel:
+	temp = [0, 0, 0, 0, 0, 0]
+	for ii in range(6):
+		temp[ii] = I2C.read_byte_data(xgAddr, OUT_X_L_XL + (ii) )
+
+	ax = (temp[1] << 8 | temp[0])
+	ay = (temp[3] << 8 | temp[2])
+	az = (temp[5] << 8 | temp[4])
+
+	if (_autoCalc):
+		ax -= aBiasRaw[X_AXIS]
+		ay -= aBiasRaw[Y_AXIS]
+		az -= aBiasRaw[Z_AXIS]
+
+def 
+
 def initI2C():
     bus = SMBus(1)
     return bus
