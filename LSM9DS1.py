@@ -1,5 +1,6 @@
-
-import imu_reg.py as reg
+from imu_reg import *
+from smbus import SMBus
+from enum import Enum 
 
 xgAddr = 0x6B
 mAddr  = 0x1E
@@ -117,20 +118,42 @@ def LSM9DS1_begin():
 
     return True
 
-def initGyro():
+def initAccel():
 
-    tempRegValue = 0
+	tempRegValue = 0
 
-    if (settings.gyro.enabled):
-        tempRegValue = (settings.gyro.sampleRate & 0x07) << 5
+	if (settings.accel.enableZ) tempRegValue |= (1<<5)
+	if (settings.accel.enableY) tempRegValue |= (1<<4)
+	if (settings.accel.enableX) tempRegValue |= (1<<3)
 
-    if (settings.gyro.scale == 500):
-        tempRegValue |= (0x1 << 3)
-        break
-    if (settings.gyro.scale == 2000):
-        tempRegValue |= (0x3 << 3)
-        break
-    
+	I2C.write_byte_data(xgAddr, CTRL_REG5_XL, tempRegValue)
+	
+	tempRegValue = 0
+
+	if (settings.accel.enabled):
+		tempRegValue |= (settings.accel.sampleRate & 0x07) << 5
+
+	if (settings.accel.scale == 4):
+		tempRegValue |= (0x2 << 3)
+	else (settings.accel.scale == 8):
+		tempRegValue |= (0x3 << 3)
+	else (settings.accel.scale == 16):
+		tempRegValue |= (0x1 << 3)
+	
+	if (settings.accel.bandwidth >= 0):
+		tempRegValue |= (1<<2)
+		tempRegValue |= (settings.accel.bandwidth & 0x03)
+	
+	I2C.write_byte_data(xgAddr, CTRL_REG6_XL, tempRegValue)
+
+	tempRegValue = 0
+	if (settings.accel.highResEnable):
+		tempRegValue |= (1<<7)
+		tempRegValue |= (settings.accel.highResBandwidth & 0x3) << 5
+	
+	I2C.write_byte_data(xgAddr, CTRL_REG7_XL, tempRegValue)
+
+	
 def initI2C():
     bus = SMBus(1)
     return bus

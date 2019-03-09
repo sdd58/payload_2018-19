@@ -4,7 +4,7 @@
 
 #Register file for the LSM9DS1 IMU
 
-MAG_I2C_ADDR
+
 ACT_THS				=  0x04
 ACT_DUR				=  0x05
 INT_GEN_CFG_XL		=  0x06
