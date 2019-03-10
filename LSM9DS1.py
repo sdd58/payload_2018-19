@@ -226,9 +226,9 @@ class LSM9DS1:
 		
 		temp = I2Cbus.read_i2c_block_data(xgAddr, OUT_X_L_XL, 6)
 
-	 	ax = (temp[1] << 8 | temp[0])
+		ax = (temp[1] << 8 | temp[0])
 		ay = (temp[3] << 8 | temp[2])
-	 	az = (temp[5] << 8 | temp[4])
+		az = (temp[5] << 8 | temp[4])
 
 	 	if (_autoCalc):
 	 		ax -= aBiasRaw[0]
@@ -316,7 +316,7 @@ class LSM9DS1:
 		if (enable):
 			temp |= (1<<1)
 		else
-			temp &= !(1<<1)
+			temp &= ~(1<<1)
 		I2Cbus.write_byte_data(xgAddr, CTRL_REG9, temp)
 
 	def setFIFO(self, fifomode, fifoThs):
