@@ -154,9 +154,9 @@ class LSM9DS1:
 
 		if (settings.accel.scale == 4):
 			tempRegValue |= (0x2 << 3)
-		else if (settings.accel.scale == 8):
+		elif(settings.accel.scale == 8):
 			tempRegValue |= (0x3 << 3)
-		else if (settings.accel.scale == 16):
+		elif(settings.accel.scale == 16):
 			tempRegValue |= (0x1 << 3)
 		
 		if (settings.accel.bandwidth >= 0):
@@ -232,7 +232,7 @@ class LSM9DS1:
 	# 	if (gScl == 500):
 	# 		ctrl1RegValue |= (0x1 << 3)
 	# 		settings.gyro.scale = 500
-	# 	else if (gScl = 2000):
+	# 	elif(gScl = 2000):
 	# 		ctrl1RegValue |= (0x3 << 3)
 	# 		settings.gyro.scale = 2000
 	# 	else:
@@ -273,10 +273,10 @@ class LSM9DS1:
 		if (aScl == 4):
 			tempRegValue |= (0x2 << 3)
 			settings.accel.scale = 4
-		else if (aScl == 8):
+		elif(aScl == 8):
 			tempRegValue |= (0x3 << 3)
 			settings.accel.scale = 8
-		else if (aScl == 16):
+		elif(aScl == 16):
 			tempRegValue |= (0x1 << 3)
 			settings.accel.scale =16
 		else:
