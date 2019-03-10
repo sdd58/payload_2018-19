@@ -3,16 +3,18 @@ from imu_types import *
 from smbus import SMBus
 from enum import Enum 
 
+xgAddr = 0x6B
+mAddr  = 0x1E
+
 class LSM9DS1:
-
-	xgAddr = 0x6B
-	mAddr  = 0x1E
-	interface = interface_mode.IMU_MODE_I2C
-	I2Cbus = SMBus(1)
-	settings = IMUSettings
-
+	
 	def __init__(self, interface, xgAddr, mAddr):
+
 		
+		interface = interface_mode.IMU_MODE_I2C
+		I2Cbus = SMBus(1)
+		settings = IMUSettings
+
 		settings.device.commInterface = interface
 		settings.device.agAddress = xgAddr
 		settings.device.mAddress = mAddr
