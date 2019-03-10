@@ -5,18 +5,14 @@ from enum import Enum
 
 class LSM9DS1:
 
-
 	xgAddr = 0x6B
 	mAddr  = 0x1E
-	I2Cbus = initI2C()
+	interface = interface_mode.IMU_MODE_I2C
+	I2Cbus = SMBus(1)
 	settings = IMUSettings
 
 	def __init__(self, interface, xgAddr, mAddr):
 		
-		
-		
-		
-
 		settings.device.commInterface = interface
 		settings.device.agAddress = xgAddr
 		settings.device.mAddress = mAddr
@@ -126,8 +122,6 @@ class LSM9DS1:
 		calcmRes() # Calculate Gs / ADC tick, stored in mRes variable
 		calcaRes() # Calculate g / ADC tick, stored in aRes variable
 
-		I2C = initI2C()
-
 		who_am_i_XG = I2Cbus.read_byte_data(xgAddr,reg.WHO_AM_I_XG)
 		who_am_i_M  = I2Cbus.read_byte_data(mAddr, reg.WHO_AM_I_M)
 
@@ -175,7 +169,6 @@ class LSM9DS1:
 		
 		I2Cbus.write_byte_data(xgAddr, CTRL_REG7_XL, tempRegValue)
 
-		
 	def calibrate(self, autoCalc):
 
 		data = [0, 0, 0, 0, 0, 0]
@@ -284,9 +277,6 @@ class LSM9DS1:
 		I2Cbus.write_byte_data(xgAddr, CTRL_REG6_XL, tempRegValue)
 
 		calcaRes()
-		
-	def initI2C(self):
-		bus = SMBus(1)
-		return bus
+	
 
 
