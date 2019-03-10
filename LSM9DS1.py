@@ -69,7 +69,7 @@ class LSM9DS1:
 		# 1 = ODR/100   3 = ODR/400
 		settings.accel.highResBandwidth = 0
 
-		settings.mag.enabled = true
+		settings.mag.enabled = True
 		# mag scale can be 4, 8, 12, or 16
 		settings.mag.scale = 4
 		# mag data rate can be 0-7
