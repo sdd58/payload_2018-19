@@ -173,10 +173,8 @@ class temperatureSettings:
     enabled = None
 
 class IMUSettings:
-    device = None
-
-    gyro = None
-    accel = None
-    mag = None
-
-    temp = None
+    device = deviceSettings
+    gyro = gyroSettings
+    accel = accelSettings
+    mag = magSettings
+    temp = temperatureSettings
