@@ -7,7 +7,7 @@ xgAddr = 0x6B
 mAddr  = 0x1E
 
 class LSM9DS1:
-	
+
 	def __init__(self, interface, xgAddr, mAddr):
 
 		
@@ -19,10 +19,10 @@ class LSM9DS1:
 		settings.device.agAddress = xgAddr
 		settings.device.mAddress = mAddr
 		
-		settings.gyro.enabled = true
-		settings.gyro.enableX = true
-		settings.gyro.enableY = true
-		settings.gyro.enableZ = true
+		settings.gyro.enabled = True
+		settings.gyro.enableX = True
+		settings.gyro.enableY = True
+		settings.gyro.enableZ = True
 		# gyro scale can be 245, 500, or 2000
 		settings.gyro.scale = 245
 		# gyro sample rate: value between 1-6
@@ -34,22 +34,22 @@ class LSM9DS1:
 		# Actual value of cutoff frequency depends
 		# on sample rate.
 		settings.gyro.bandwidth = 0
-		settings.gyro.lowPowerEnable = false
-		settings.gyro.HPFEnable = false
+		settings.gyro.lowPowerEnable = False
+		settings.gyro.HPFEnable = False
 		# Gyro HPF cutoff frequency: value between 0-9
 		# Actual value depends on sample rate. Only applies
 		# if gyroHPFEnable is true.
 		settings.gyro.HPFCutoff = 0
-		settings.gyro.flipX = false
-		settings.gyro.flipY = false
-		settings.gyro.flipZ = false
+		settings.gyro.flipX = False
+		settings.gyro.flipY = False
+		settings.gyro.flipZ = False
 		settings.gyro.orientation = 0
-		settings.gyro.latchInterrupt = true
+		settings.gyro.latchInterrupt = True
 
-		settings.accel.enabled = true
-		settings.accel.enableX = true
-		settings.accel.enableY = true
-		settings.accel.enableZ = true
+		settings.accel.enabled = True
+		settings.accel.enableX = True
+		settings.accel.enableY = True
+		settings.accel.enableZ = True
 		# accel scale can be 2, 4, 8, or 16
 		settings.accel.scale = 2
 		# accel sample rate can be 1-6
@@ -62,7 +62,7 @@ class LSM9DS1:
 		# 0 = 408 Hz   2 = 105 Hz
 		# 1 = 211 Hz   3 = 50 Hz
 		settings.accel.bandwidth = -1
-		settings.accel.highResEnable = false
+		settings.accel.highResEnable = False
 		# accelHighResBandwidth can be any value between 0-3
 		# LP cutoff is set to a factor of sample rate
 		# 0 = ODR/50    2 = ODR/9
@@ -78,13 +78,13 @@ class LSM9DS1:
 		# 2 = 2.5 Hz    6 = 40 Hz
 		# 3 = 5 Hz      7 = 80 Hz
 		settings.mag.sampleRate = 7
-		settings.mag.tempCompensationEnable = false
+		settings.mag.tempCompensationEnable = False
 		# magPerformance can be any value between 0-3
 		# 0 = Low power mode      2 = high performance
 		# 1 = medium performance  3 = ultra-high performance
 		settings.mag.XYPerformance = 3
 		settings.mag.ZPerformance = 3
-		settings.mag.lowPowerEnable = false
+		settings.mag.lowPowerEnable = False
 		# magOperatingMode can be 0-2
 		# 0 = continuous conversion
 		# 1 = single-conversion
