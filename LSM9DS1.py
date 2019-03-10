@@ -3,15 +3,23 @@ from imu_types import *
 from smbus import SMBus
 from enum import Enum 
 
-xgAddr = 0x6B
-mAddr  = 0x1E
+
+SENSITIVITY_ACCELEROMETER_2  = 0.000061
+SENSITIVITY_ACCELEROMETER_4  = 0.000122
+SENSITIVITY_ACCELEROMETER_8  = 0.000244
+SENSITIVITY_ACCELEROMETER_16 = 0.000732
+SENSITIVITY_GYROSCOPE_245    = 0.00875
+SENSITIVITY_GYROSCOPE_500    = 0.0175
+SENSITIVITY_GYROSCOPE_2000   = 0.07
+SENSITIVITY_MAGNETOMETER_4   = 0.00014
+SENSITIVITY_MAGNETOMETER_8   = 0.00029
+SENSITIVITY_MAGNETOMETER_12  = 0.00043
+SENSITIVITY_MAGNETOMETER_16  = 0.00058
 
 class LSM9DS1:
 
 	def __init__(self, interface, xgAddr, mAddr):
 
-		
-		interface = interface_mode.IMU_MODE_I2C
 		I2Cbus = SMBus(1)
 		settings = IMUSettings
 
@@ -101,9 +109,9 @@ class LSM9DS1:
 		aBiasRaw = [0, 0, 0]
 		mBiasRaw = [0, 0, 0]
 
-		__gRes = None
-		__aRes = None
-		__mRes = None
+		gRes = None
+		aRes = None
+		mRes = None
 
 		for i in range(3):
 			gBias[i] = 0
@@ -120,8 +128,8 @@ class LSM9DS1:
 		constrainScales()
 		# Once we have the scale values, we can calculate the resolution
 		# of each sensor. That's what these functions are for. One for each sensor
-		calcgRes() # Calculate DPS / ADC tick, stored in gRes variable
-		calcmRes() # Calculate Gs / ADC tick, stored in mRes variable
+		#calcgRes() # Calculate DPS / ADC tick, stored in gRes variable
+		#calcmRes() # Calculate Gs / ADC tick, stored in mRes variable
 		calcaRes() # Calculate g / ADC tick, stored in aRes variable
 
 		who_am_i_XG = I2Cbus.read_byte_data(xgAddr,reg.WHO_AM_I_XG)
@@ -130,9 +138,9 @@ class LSM9DS1:
 		if ( who_am_i_XG != WHO_AM_I_AG_RSP | who_am_i_M != WHO_AM_I_M_RSP):
 			return False
 
-		initGyro()
+		#initGyro()
 		initAccel()
-		initMag()
+		#initMag()
 
 		return True
 
@@ -193,18 +201,18 @@ class LSM9DS1:
 	 		samples = I2Cbus.read_byte_data(xgAddr, FIFO_SRC) & 0x3F
 		
 	 	for ii in samples:
-	 		readGyro()
-	 		gBiasRawTemp[0] += gx
-	 		gBiasRawTemp[1] += gy
-	 		gBiasRawTemp[2] += gz
+	 		#readGyro()
+	 		#gBiasRawTemp[0] += gx
+	 		#gBiasRawTemp[1] += gy
+	 		#gBiasRawTemp[2] += gz
 	 		readAccel()
 	 		aBiasRawTemp[0] += ax
 	 		aBiasRawTemp[1] += ay
-	 		aBiasRawTemp[2] += az - (int16_t)(1./aRes) #Assumes sensor facing up!
+	 		aBiasRawTemp[2] += az - (1/aRes) #Assumes sensor facing up!
 
 	 	for ii in range(3):
-	 		gBiasRaw[ii] = gBiasRawTemp[ii] / samples
-	 		gBias[ii] = calcGyro(gBiasRaw[ii])
+	 		#gBiasRaw[ii] = gBiasRawTemp[ii] / samples
+	 		#gBias[ii] = calcGyro(gBiasRaw[ii])
 	 		aBiasRaw[ii] = aBiasRawTemp[ii] / samples
 	 		aBias[ii] = calcAccel(aBiasRaw[ii])
 
@@ -223,9 +231,9 @@ class LSM9DS1:
 	 	az = (temp[5] << 8 | temp[4])
 
 	 	if (_autoCalc):
-	 		ax -= aBiasRaw[X_AXIS]
-	 		ay -= aBiasRaw[Y_AXIS]
-	 		az -= aBiasRaw[Z_AXIS]
+	 		ax -= aBiasRaw[0]
+	 		ay -= aBiasRaw[1]
+	 		az -= aBiasRaw[2]
 
 	def setGyroScale(self, gScl) :
 
@@ -287,6 +295,48 @@ class LSM9DS1:
 		I2Cbus.write_byte_data(xgAddr, CTRL_REG6_XL, tempRegValue)
 
 		calcaRes()
+
+	def calcAccel(self, accel):
+		return aRes * accel
+	
+	def calcaRes(self):
+		if (settings.accel.scale == 2):
+			aRes = SENSITIVITY_ACCELEROMETER_2
+		elif (settings.accel.scale == 4):
+			aRes = SENSITIVITY_ACCELEROMETER_4
+		elif (settings.accel.scale == 8):
+			aRes = SENSITIVITY_ACCELEROMETER_8
+		elif (settings.accel.scale == 16):
+			aRes = SENSITIVITY_ACCELEROMETER_16
+		else:
+			break
+	
+	def enableFIFO(self, enable):
+		temp = I2Cbus.read_byte_data(xgAddr, CTRL_REG9)
+		if (enable):
+			temp |= (1<<1)
+		else
+			temp &= !(1<<1)
+		I2Cbus.write_byte_data(xgAddr, CTRL_REG9, temp)
+
+	def setFIFO(self, fifomode, fifoThs):
+		threshold =  fifoThs if (fifoThs <= 0x1F) else 0x1F
+		I2Cbus.write_byte_data(FIFO_CTRL, ((fifomode & 0x07) << 5) | (threshold & 0x1F))
+	
+	def getFIFOSamples(self):
+		return I2Cbus.read_byte_data(xgAddr, FIFO_SRC & 0x3F)
+
+	def constrainScales(self):
+		if ( (settings.gyro.scale != 245) & (settings.gyro.scale != 500) & (settings.gyro.scale != 2000)):
+			settings.gyro.scale = 245
+		
+		if ( (settings.accel.scale != 2) & (settings.accel.scale != 4) & (settings.accel.scale != 8) & (settings.accel.scale != 16)):
+			settings.accel.scale = 2
+
+		settings.mag.scale = 4
+	
+
+		
 	
 
 
