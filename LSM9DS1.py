@@ -138,9 +138,12 @@ class LSM9DS1:
 
 		tempRegValue = 0
 
-		if (settings.accel.enableZ) tempRegValue |= (1<<5)
-		if (settings.accel.enableY) tempRegValue |= (1<<4)
-		if (settings.accel.enableX) tempRegValue |= (1<<3)
+		if (settings.accel.enableZ):
+			 tempRegValue |= (1<<5)
+		if (settings.accel.enableY):
+			 tempRegValue |= (1<<4)
+		if (settings.accel.enableX):
+			 tempRegValue |= (1<<3)
 
 		I2Cbus.write_byte_data(xgAddr, CTRL_REG5_XL, tempRegValue)
 		
