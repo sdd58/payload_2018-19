@@ -179,94 +179,94 @@ class LSM9DS1:
 
 		return (status & (1<<0))
 
-	# def calibrate(self, autoCalc):
+	def calibrate(self, autoCalc):
 
-	# 	data = [0, 0, 0, 0, 0, 0]
-	# 	samples = 0
+	 	data = [0, 0, 0, 0, 0, 0]
+	 	samples = 0
 
-	# 	aBiasRawTemp = [0, 0, 0]
-	# 	gBiasRawTemp = [0, 0, 0]
+	 	aBiasRawTemp = [0, 0, 0]
+	 	gBiasRawTemp = [0, 0, 0]
 
-	# 	enableFIFO(True)
-	# 	setFIFO(FIFO_THS, 0x1F)
-	# 	while (samples < 0x1F):
-	# 		samples = I2Cbus.read_byte_data(xgAddr, FIFO_SRC) & 0x3F
+	 	enableFIFO(True)
+	 	setFIFO(FIFO_THS, 0x1F)
+	 	while (samples < 0x1F):
+	 		samples = I2Cbus.read_byte_data(xgAddr, FIFO_SRC) & 0x3F
 		
-	# 	for ii in samples:
-	# 		readGyro()
-	# 		gBiasRawTemp[0] += gx
-	# 		gBiasRawTemp[1] += gy
-	# 		gBiasRawTemp[2] += gz
-	# 		readAccel()
-	# 		aBiasRawTemp[0] += ax
-	# 		aBiasRawTemp[1] += ay
-	# 		aBiasRawTemp[2] += az - (int16_t)(1./aRes) #Assumes sensor facing up!
+	 	for ii in samples:
+	 		readGyro()
+	 		gBiasRawTemp[0] += gx
+	 		gBiasRawTemp[1] += gy
+	 		gBiasRawTemp[2] += gz
+	 		readAccel()
+	 		aBiasRawTemp[0] += ax
+	 		aBiasRawTemp[1] += ay
+	 		aBiasRawTemp[2] += az - (int16_t)(1./aRes) #Assumes sensor facing up!
 
-	# 	for ii in range(3):
-	# 		gBiasRaw[ii] = gBiasRawTemp[ii] / samples
-	# 		gBias[ii] = calcGyro(gBiasRaw[ii])
-	# 		aBiasRaw[ii] = aBiasRawTemp[ii] / samples
-	# 		aBias[ii] = calcAccel(aBiasRaw[ii])
+	 	for ii in range(3):
+	 		gBiasRaw[ii] = gBiasRawTemp[ii] / samples
+	 		gBias[ii] = calcGyro(gBiasRaw[ii])
+	 		aBiasRaw[ii] = aBiasRawTemp[ii] / samples
+	 		aBias[ii] = calcAccel(aBiasRaw[ii])
 
-	# 	enableFIFO(False)
-	# 	setFIFO(FIFO_OFF,0x00)
+	 	enableFIFO(False)
+	 	setFIFO(FIFO_OFF,0x00)
 
-	# 	if (autoCalc):
-	# 		_autoCalc = True
+	 	if (autoCalc):
+	 		_autoCalc = True
 
 	def readAccel(self):
 		
 		temp = I2Cbus.read_i2c_block_data(xgAddr, OUT_X_L_XL, 6)
 
-		ax = (temp[1] << 8 | temp[0])
+	 	ax = (temp[1] << 8 | temp[0])
 		ay = (temp[3] << 8 | temp[2])
-		az = (temp[5] << 8 | temp[4])
+	 	az = (temp[5] << 8 | temp[4])
 
-		if (_autoCalc):
-			ax -= aBiasRaw[X_AXIS]
-			ay -= aBiasRaw[Y_AXIS]
-			az -= aBiasRaw[Z_AXIS]
+	 	if (_autoCalc):
+	 		ax -= aBiasRaw[X_AXIS]
+	 		ay -= aBiasRaw[Y_AXIS]
+	 		az -= aBiasRaw[Z_AXIS]
 
-	# def setGyroScale(self, gScl) :
+	def setGyroScale(self, gScl) :
 
-	# 	ctrl1RegValue = I2Cbus.read_byte_data(xgAddr, CTRL_REG1_G) & 0xE7
+	 	ctrl1RegValue = I2Cbus.read_byte_data(xgAddr, CTRL_REG1_G) & 0xE7
 
-	# 	if (gScl == 500):
-	# 		ctrl1RegValue |= (0x1 << 3)
-	# 		settings.gyro.scale = 500
-	# 	elif(gScl = 2000):
-	# 		ctrl1RegValue |= (0x3 << 3)
-	# 		settings.gyro.scale = 2000
-	# 	else:
-	# 		settings.gyro.scale = 245
+	 	if (gScl == 500):
+	 		ctrl1RegValue |= (0x1 << 3)
+	 		settings.gyro.scale = 500
+	 	elif(gScl = 2000):
+	 		ctrl1RegValue |= (0x3 << 3)
+	 		settings.gyro.scale = 2000
+	 	else:
+	 		settings.gyro.scale = 245
 	
-	# 	I2Cbus.write_byte_data(xgAddr, CTRL_REG1_G, ctrl1RegValue)
+	 	I2Cbus.write_byte_data(xgAddr, CTRL_REG1_G, ctrl1RegValue)
 
-	# 	calcgRes()
+	 	calcgRes()
 
-	# def setGyroODR(self, gRate):
-	# 	if (gRate & 0x07 != 0):
-	# 		temp = I2Cbus.read_byte_data(xgAddr, CTRL_REG1_G)
+	def setGyroODR(self, gRate):
+	 	if (gRate & 0x07 != 0):
+	 		temp = I2Cbus.read_byte_data(xgAddr, CTRL_REG1_G)
 
-	# 		temp &= 0xFF^(0x7 << 5)
-	# 		temp |= (gRate & 0x07) << 5
+	 		temp &= 0xFF^(0x7 << 5)
+	 		temp |= (gRate & 0x07) << 5
 
-	# 		settings.gyro.sampleRate = gRate & 0x07
+	 		settings.gyro.sampleRate = gRate & 0x07
 
-	# 		I2Cbus.write_byte_data(xgAddr, CTRL_REG1_G, temp)
+	 		I2Cbus.write_byte_data(xgAddr, CTRL_REG1_G, temp)
 
-	# def setAccelODR(self, aRate):
-	# 	if (aRate & 0x07 != 0):
-	# 		temp = I2Cbus.read_byte_data(xgAddr, CTRL_REG6_XL)
+	def setAccelODR(self, aRate):
+	 	if (aRate & 0x07 != 0):
+	 		temp = I2Cbus.read_byte_data(xgAddr, CTRL_REG6_XL)
 
-	# 		temp &= 0x1F
-	# 		temp |= (aRate & 0x07) << 5
+	 		temp &= 0x1F
+	 		temp |= (aRate & 0x07) << 5
 
-	# 		settings.accel.sampleRate = aRate & 0x07
+	 		settings.accel.sampleRate = aRate & 0x07
 
-	# 		I2Cbus.write_byte_data(xgAddr, CTRL_REG6_XL, temp)
+	 		I2Cbus.write_byte_data(xgAddr, CTRL_REG6_XL, temp)
 
-	# def setAccelScale(self, aScl):
+	def setAccelScale(self, aScl):
 		#Input is a byte 
 
 		tempRegValue = I2Cbus.read_byte_data(xgAddr, CTRL_REG6_XL)
