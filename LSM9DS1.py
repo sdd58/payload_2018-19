@@ -302,10 +302,10 @@ class LSM9DS1:
 		ax = (temp[1] << 8 | temp[0])
 		ay = (temp[3] << 8 | temp[2])
 		az = (temp[5] << 8 | temp[4])
-	 	if (_autoCalc):
-	 		ax -= aBiasRaw[0]
-	 		ay -= aBiasRaw[1]
-	 		az -= aBiasRaw[2]
+		if (_autoCalc):
+                        ax -= aBiasRaw[0]
+                        ay -= aBiasRaw[1]
+                        az -= aBiasRaw[2]
 
 	def readGyro(self):
 		temp = I2Cbus.read_i2c_block_data(xgAddr, OUT_X_L_G, 6) # We'll read six bytes from the gyro into temp
