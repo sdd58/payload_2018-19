@@ -59,10 +59,10 @@ class LSM9DS1:
 
 		self.settings.device.commInterface = interface
 		self.settings.device.agAddress = a
-		self.settings.device.self.mAddress = b
+		self.settings.device.mAddress = b
 		
 		self.xgAddr = self.settings.device.agAddress
-		self.mAddr = self.settings.device.self.mAddress
+		self.mAddr = self.settings.device.mAddress
 
 		self.settings.gyro.enabled = True
 		self.settings.gyro.enableX = True
