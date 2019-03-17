@@ -21,14 +21,49 @@ class LSM9DS1:
 	I2Cbus = SMBus(1)
 	settings = IMUSettings
 
-	def __init__(self, interface, xgAddr, mAddr):
+	gBias = None
+	aBias = None
+	mBias = None
+	
+	gBiasRaw = None
+	aBiasRaw = None
+	mBiasRaw = None
+
+	gRes = None
+	aRes = None
+	mRes = None
+
+	_autoCalc = False
+
+	ax = None
+	ay = None
+	az = None
+
+	gx = None
+	gy = None
+	gz = None
+
+	mx = None
+	my = None
+	mz = None
+
+
+	xgAddr = None
+	mAddr = None
+
+	Temperature = None
+
+	def __init__(self, interface, a, b):
 
 		
 
 		self.settings.device.commInterface = interface
-		self.settings.device.agAddress = xgAddr
-		self.settings.device.mAddress = mAddr
+		self.settings.device.agAddress = a
+		self.settings.device.self.mAddress = b
 		
+		self.xgAddr = self.settings.device.agAddress
+		self.mAddr = self.settings.device.self.mAddress
+
 		self.settings.gyro.enabled = True
 		self.settings.gyro.enableX = True
 		self.settings.gyro.enableY = True
@@ -103,44 +138,44 @@ class LSM9DS1:
 
 		self.settings.temp.enabled = False
 		
-		gBias = [0, 0, 0]
-		aBias = [0, 0, 0]
-		mBias = [0, 0, 0]
+		self.gBias = [0, 0, 0]
+		self.aBias = [0, 0, 0]
+		self.mBias = [0, 0, 0]
 
-		gBiasRaw = [0, 0, 0]
-		aBiasRaw = [0, 0, 0]
-		mBiasRaw = [0, 0, 0]
+		self.gBiasRaw = [0, 0, 0]
+		self.aBiasRaw = [0, 0, 0]
+		self.mBiasRaw = [0, 0, 0]
 
-		gRes = None
-		aRes = None
-		mRes = None
+		self.gRes = None
+		self.aRes = None
+		self.mRes = None
 
 		for i in range(3):
-			gBias[i] = 0
-			aBias[i] = 0
-			mBias[i] = 0
-			gBiasRaw[i] = 0
-			aBiasRaw[i] = 0
-			mBiasRaw[i] = 0
+			self.gBias[i] = 0
+			self.aBias[i] = 0
+			self.mBias[i] = 0
+			self.gBiasRaw[i] = 0
+			self.aBiasRaw[i] = 0
+			self.mBiasRaw[i] = 0
 
-		_autoCalc = False
+		self._autoCalc = False
 
 	def begin(self):
-		constrainScales()
+		self.constrainScales()
 		# Once we have the scale values, we can calculate the resolution
 		# of each sensor. That's what these functions are for. One for each sensor
 		#calcgRes() # Calculate DPS / ADC tick, stored in gRes variable
 		#calcmRes() # Calculate Gs / ADC tick, stored in mRes variable
-		calcaRes() # Calculate g / ADC tick, stored in aRes variable
+		self.calcaRes() # Calculate g / ADC tick, stored in aRes variable
 
-		who_am_i_XG = self.I2Cbus.read_byte_data(xgAddr,reg.WHO_AM_I_XG)
-		who_am_i_M  = self.I2Cbus.read_byte_data(mAddr, reg.WHO_AM_I_M)
+		who_am_i_XG = self.I2Cbus.read_byte_data(self.xgAddr,reg.WHO_AM_I_XG)
+		who_am_i_M  = self.I2Cbus.read_byte_data(self.mAddr, reg.WHO_AM_I_M)
 
 		if ( who_am_i_XG != WHO_AM_I_AG_RSP | who_am_i_M != WHO_AM_I_M_RSP):
 			return False
 
 		#initGyro()
-		initAccel()
+		self.initAccel()
 		#initMag()
 
 		return True
@@ -155,7 +190,7 @@ class LSM9DS1:
 		if (self.settings.accel.enableX):
 			 tempRegValue |= (1<<3)
 
-		self.I2Cbus.write_byte_data(xgAddr, CTRL_REG5_XL, tempRegValue)
+		self.I2Cbus.write_byte_data(self.xgAddr, CTRL_REG5_XL, tempRegValue)
 		
 		tempRegValue = 0
 
@@ -173,14 +208,14 @@ class LSM9DS1:
 			tempRegValue |= (1<<2)
 			tempRegValue |= (self.settings.accel.bandwidth & 0x03)
 		
-		self.I2Cbus.write_byte_data(xgAddr, CTRL_REG6_XL, tempRegValue)
+		self.I2Cbus.write_byte_data(self.xgAddr, CTRL_REG6_XL, tempRegValue)
 
 		tempRegValue = 0
 		if (self.settings.accel.highResEnable):
 			tempRegValue |= (1<<7)
 			tempRegValue |= (self.settings.accel.highResBandwidth & 0x3) << 5
 		
-		self.I2Cbus.write_byte_data(xgAddr, CTRL_REG7_XL, tempRegValue)
+		self.I2Cbus.write_byte_data(self.xgAddr, CTRL_REG7_XL, tempRegValue)
 
 	def initGyro(self):
 		tempRegValue = 0
@@ -203,13 +238,13 @@ class LSM9DS1:
 		# Otherwise we'll set it to 245 dps (0x0 << 4)
 
 		tempRegValue |= (self.settings.gyro.bandwidth & 0x3)
-		self.I2Cbus.write_byte_data(xgAddr, CTRL_REG1_G, tempRegValue)
+		self.I2Cbus.write_byte_data(self.xgAddr, CTRL_REG1_G, tempRegValue)
 
 		# CTRL_REG2_G (Default value: 0x00)
 		# [0][0][0][0][INT_SEL1][INT_SEL0][OUT_SEL1][OUT_SEL0]
 		# INT_SEL[1:0] - INT selection configuration
 		# OUT_SEL[1:0] - Out selection configuration
-		self.I2Cbus.write_byte_data(xgAddr, CTRL_REG2_G, 0x00)
+		self.I2Cbus.write_byte_data(self.xgAddr, CTRL_REG2_G, 0x00)
 
 		# CTRL_REG3_G (Default value: 0x00)
 		# [LP_mode][HP_EN][0][0][HPCF3_G][HPCF2_G][HPCF1_G][HPCF0_G]
@@ -219,7 +254,7 @@ class LSM9DS1:
 		tempRegValue = (1<<7) if self.settings.gyro.lowPowerEnable else 0
 		if self.settings.gyro.HPFEnable:
 			tempRegValue |= (1<<6) | (self.settings.gyro.HPFCutoff & 0x0F)
-		self.I2Cbus.write_byte_data(xgAddr, CTRL_REG3_G, tempRegValue)
+		self.I2Cbus.write_byte_data(self.xgAddr, CTRL_REG3_G, tempRegValue)
 
 		# CTRL_REG4 (Default value: 0x38)
 		# [0][0][Zen_G][Yen_G][Xen_G][0][LIR_XL1][4D_XL1]
@@ -237,7 +272,7 @@ class LSM9DS1:
 			tempRegValue |= 1<<3
 		if self.settings.gyro.latchInterrupt:
 			tempRegValue |= (1<<1)
-		self.I2Cbus.write_byte_data(xgAddr, CTRL_REG4, tempRegValue)
+		self.I2Cbus.write_byte_data(self.xgAddr, CTRL_REG4, tempRegValue)
 
 		# ORIENT_CFG_G (Default value: 0x00)
 		# [0][0][SignX_G][SignY_G][SignZ_G][Orient_2][Orient_1][Orient_0]
@@ -250,85 +285,84 @@ class LSM9DS1:
 			tempRegValue |= (1<<4)
 		if self.settings.gyro.flipZ:
 			tempRegValue |= (1<<3)
-		self.I2Cbus.write_byte_data(xgAddr, ORIENT_CFG_G, tempRegValue)
+		self.I2Cbus.write_byte_data(self.xgAddr, ORIENT_CFG_G, tempRegValue)
 		
 	def accelAvailable(self):
-		status = self.I2Cbus.read_byte_data(xgAddr, STATUS_REG_1)
-
+		status = self.I2Cbus.read_byte_data(self.xgAddr, STATUS_REG_1)
 		return (status & (1<<0))
 
 	def gyroAvailable(self):
-                status = self.I2Cbus.read_byte_data(xgAddr, STATUS_REG_1)
-                return (status & (1<<0))
+        status = self.I2Cbus.read_byte_data(self.xgAddr, STATUS_REG_1)
+        return (status & (1<<0))
 
 	def tempAvailable(self):
-                status = self.I2Cbus.read_byte_data(xgAddr, STATUS_REG_1)
-                return ((status & (1<<2)) >> 2)
+        status = self.I2Cbus.read_byte_data(self.xgAddr, STATUS_REG_1)
+        return ((status & (1<<2)) >> 2)
 
 	def calibrate(self, autoCalc):
 	 	data = [0, 0, 0, 0, 0, 0]
 	 	samples = 0
 
-	 	aBiasRawTemp = [0, 0, 0]
-	 	gBiasRawTemp = [0, 0, 0]
+	 	self.aBiasRawTemp = [0, 0, 0]
+	 	self.gBiasRawTemp = [0, 0, 0]
 
-	 	enableFIFO(True)
-	 	setFIFO(FIFO_THS, 0x1F)
+	 	self.enableFIFO(True)
+	 	self.setFIFO(FIFO_THS, 0x1F)
 	 	while (samples < 0x1F):
-	 		samples = self.I2Cbus.read_byte_data(xgAddr, FIFO_SRC) & 0x3F
+	 		samples = self.I2Cbus.read_byte_data(self.xgAddr, FIFO_SRC) & 0x3F
 		
 	 	for ii in samples:
-	 		#readGyro()
-	 		#gBiasRawTemp[0] += gx
-	 		#gBiasRawTemp[1] += gy
-	 		#gBiasRawTemp[2] += gz
-	 		readAccel()
-	 		aBiasRawTemp[0] += ax
-	 		aBiasRawTemp[1] += ay
-	 		aBiasRawTemp[2] += az - (1/aRes) #Assumes sensor facing up!
+	 		self.readGyro()
+	 		self.gBiasRawTemp[0] += self.gx
+	 		self.gBiasRawTemp[1] += self.gy
+	 		self.gBiasRawTemp[2] += self.gz
+	 		self.readAccel()
+	 		self.aBiasRawTemp[0] += self.ax
+	 		self.aBiasRawTemp[1] += self.ay
+	 		self.aBiasRawTemp[2] += self.az - (1/self.aRes) #Assumes sensor facing up!
 
 	 	for ii in range(3):
-	 		#gBiasRaw[ii] = gBiasRawTemp[ii] / samples
-	 		#gBias[ii] = calcGyro(gBiasRaw[ii])
-	 		aBiasRaw[ii] = aBiasRawTemp[ii] / samples
-	 		aBias[ii] = calcAccel(aBiasRaw[ii])
+	 		self.gBiasRaw[ii] = self.gBiasRawTemp[ii] / samples
+	 		self.gBias[ii] = self.calcGyro(gBiasRaw[ii])
+	 		self.aBiasRaw[ii] = self.aBiasRawTemp[ii] / samples
+	 		self.aBias[ii] = self.calcAccel(self.aBiasRaw[ii])
 
-	 	enableFIFO(False)
-	 	setFIFO(FIFO_OFF,0x00)
+	 	self.enableFIFO(False)
+	 	self.setFIFO(FIFO_OFF,0x00)
 
 	 	if (autoCalc):
-	 		_autoCalc = True
+	 		self._autoCalc = True
 
 	def readAccel(self):
-		temp = self.I2Cbus.read_i2c_block_data(xgAddr, OUT_X_L_XL, 6)
+		temp = self.I2Cbus.read_i2c_block_data(self.xgAddr, OUT_X_L_XL, 6)
 
-		ax = (temp[1] << 8 | temp[0])
-		ay = (temp[3] << 8 | temp[2])
-		az = (temp[5] << 8 | temp[4])
-		if (_autoCalc):
-                        ax -= aBiasRaw[0]
-                        ay -= aBiasRaw[1]
-                        az -= aBiasRaw[2]
+		self.ax = (temp[1] << 8 | temp[0])
+		self.ay = (temp[3] << 8 | temp[2])
+		self.az = (temp[5] << 8 | temp[4])
+		if (self._autoCalc):
+            self.ax -= self.aBiasRaw[0]
+            self.ay -= self.aBiasRaw[1]
+            self.az -= self.aBiasRaw[2]
 
 	def readGyro(self):
-		temp = self.I2Cbus.read_i2c_block_data(xgAddr, OUT_X_L_G, 6) # We'll read six bytes from the gyro into temp
+		temp = self.I2Cbus.read_i2c_block_data(self.xgAddr, OUT_X_L_G, 6) # We'll read six bytes from the gyro into temp
 
-		gx = (temp[1] << 8) | temp[0] # Store x-axis values into gx
-		gy = (temp[3] << 8) | temp[2] # Store y-axis values into gy
-		gz = (temp[5] << 8) | temp[4] # Store z-axis values into gz
-		if(_autoCalc):
-			gx -= gBiasRaw[0]
-			gy -= gBiasRaw[1]
-			gz -= gBiasRaw[2]
+		self.gx = (temp[1] << 8) | temp[0] # Store x-axis values into gx
+		self.gy = (temp[3] << 8) | temp[2] # Store y-axis values into gy
+		self.gz = (temp[5] << 8) | temp[4] # Store z-axis values into gz
+		if(self._autoCalc):
+			self.gx -= self.gBiasRaw[0]
+			self.gy -= self.gBiasRaw[1]
+			self.gz -= self.gBiasRaw[2]
 
 	def readTemp(self):
-		temp = self.I2Cbus.read_i2c_block_data(xgAddr, OUT_TEMP_L, 2) # We'll read two bytes from the temperature sensor into temp	
+		temp = self.I2Cbus.read_i2c_block_data(self.xgAddr, OUT_TEMP_L, 2) # We'll read two bytes from the temperature sensor into temp	
 
 		offset = 25 # Per datasheet sensor outputs 0 typically @ 25 degrees centigrade
-		temperature = offset + (((temp[1] << 8) | temp[0]) >> 8)
+		self.Temperature = offset + (((temp[1] << 8) | temp[0]) >> 8)
 
 	def setGyroScale(self, gScl) :
-	 	ctrl1RegValue = self.I2Cbus.read_byte_data(xgAddr, CTRL_REG1_G) & 0xE7
+	 	ctrl1RegValue = self.I2Cbus.read_byte_data(self.xgAddr, CTRL_REG1_G) & 0xE7
 
 	 	if (gScl == 500):
 	 		ctrl1RegValue |= (0x1 << 3)
@@ -339,36 +373,36 @@ class LSM9DS1:
 	 	else:
 	 		self.settings.gyro.scale = 245
 	
-	 	self.I2Cbus.write_byte_data(xgAddr, CTRL_REG1_G, ctrl1RegValue)
+	 	self.I2Cbus.write_byte_data(self.xgAddr, CTRL_REG1_G, ctrl1RegValue)
 
-	 	calcgRes()
+	 	self.calcgRes()
 
 	def setGyroODR(self, gRate):
 	 	if (gRate & 0x07 != 0):
-	 		temp = self.I2Cbus.read_byte_data(xgAddr, CTRL_REG1_G)
+	 		temp = self.I2Cbus.read_byte_data(self.xgAddr, CTRL_REG1_G)
 
 	 		temp &= 0xFF^(0x7 << 5)
 	 		temp |= (gRate & 0x07) << 5
 
 	 		self.settings.gyro.sampleRate = gRate & 0x07
 
-	 		self.I2Cbus.write_byte_data(xgAddr, CTRL_REG1_G, temp)
+	 		self.I2Cbus.write_byte_data(self.xgAddr, CTRL_REG1_G, temp)
 
 	def setAccelODR(self, aRate):
 	 	if (aRate & 0x07 != 0):
-	 		temp = self.I2Cbus.read_byte_data(xgAddr, CTRL_REG6_XL)
+	 		temp = self.I2Cbus.read_byte_data(self.xgAddr, CTRL_REG6_XL)
 
 	 		temp &= 0x1F
 	 		temp |= (aRate & 0x07) << 5
 
 	 		self.settings.accel.sampleRate = aRate & 0x07
 
-	 		self.I2Cbus.write_byte_data(xgAddr, CTRL_REG6_XL, temp)
+	 		self.I2Cbus.write_byte_data(self.xgAddr, CTRL_REG6_XL, temp)
 
 	def setAccelScale(self, aScl):
 		#Input is a byte 
 
-		tempRegValue = self.I2Cbus.read_byte_data(xgAddr, CTRL_REG6_XL)
+		tempRegValue = self.I2Cbus.read_byte_data(self.xgAddr, CTRL_REG6_XL)
 		tempRegValue &= 0xE7
 
 		if (aScl == 4):
@@ -383,62 +417,62 @@ class LSM9DS1:
 		else:
 			self.settings.accel.scale = 2
 		
-		self.I2Cbus.write_byte_data(xgAddr, CTRL_REG6_XL, tempRegValue)
+		self.I2Cbus.write_byte_data(self.xgAddr, CTRL_REG6_XL, tempRegValue)
 
-		calcaRes()
+		self.calcaRes()
 
 	def calcAccel(self, accel):
-		return aRes * accel
+		return self.aRes * accel
 
 	def calcGyro(self, gyro):
-                return gRes * gyro
+        return self.gRes * gyro
 	
 	def calcaRes(self):
 		if (self.settings.accel.scale == 2):
-			aRes = SENSITIVITY_ACCELEROMETER_2
+			self.aRes = SENSITIVITY_ACCELEROMETER_2
 		elif (self.settings.accel.scale == 4):
-			aRes = SENSITIVITY_ACCELEROMETER_4
+			self.aRes = SENSITIVITY_ACCELEROMETER_4
 		elif (self.settings.accel.scale == 8):
-			aRes = SENSITIVITY_ACCELEROMETER_8
+			self.aRes = SENSITIVITY_ACCELEROMETER_8
 		elif (self.settings.accel.scale == 16):
-			aRes = SENSITIVITY_ACCELEROMETER_16
+			self.aRes = SENSITIVITY_ACCELEROMETER_16
 		else:
-                        return
+        	return
 	
 	def calcgRes(self):
                 if self.settings.gyro.scale == 245:
-                        gRes = SENSITIVITY_GYROSCOPE_245
+                    self.gRes = SENSITIVITY_GYROSCOPE_245
                 elif self.settings.gyro.scale == 500:
-                        gRes = SENSITIVITY_GYROSCOPE_500
+                    self.gRes = SENSITIVITY_GYROSCOPE_500
                 elif self.settings.gyro.scale == 2000:
-                        gRes = SENSITIVITY_GYROSCOPE_2000
+                    self.gRes = SENSITIVITY_GYROSCOPE_2000
                 else:
-                        return
+                    return
 	
 	def calcmRes(self):
                 if self.settings.mag.scale == 4:
-                        mRes = SENSITIVTY_MAGNETOMETER_4
+                    self.mRes = SENSITIVTY_MAGNETOMETER_4
                 elif self.settings.mag.scale == 8:
-                        mRes = SENSITIVITY_MAGNETOMETER_8
+                    self.mRes = SENSITIVITY_MAGNETOMETER_8
                 elif self.settings.mag.scale == 12:
-                        mRes = SENSITIVITY_MAGNETOMETER_12
+                    self.mRes = SENSITIVITY_MAGNETOMETER_12
                 elif self.settings.mag.scale == 16:
-                        mRes = SENSITIVITY_MAGNETOMETER_16
+                    self.mRes = SENSITIVITY_MAGNETOMETER_16
 
 	def enableFIFO(self, enable):
-		temp = self.I2Cbus.read_byte_data(xgAddr, CTRL_REG9)
+		temp = self.I2Cbus.read_byte_data(self.xgAddr, CTRL_REG9)
 		if (enable):
 			temp |= (1<<1)
 		else:
 			temp &= ~(1<<1)
-		self.I2Cbus.write_byte_data(xgAddr, CTRL_REG9, temp)
+		self.I2Cbus.write_byte_data(self.xgAddr, CTRL_REG9, temp)
 
 	def setFIFO(self, fifomode, fifoThs):
 		threshold =  fifoThs if (fifoThs <= 0x1F) else 0x1F
 		self.I2Cbus.write_byte_data(FIFO_CTRL, ((fifomode & 0x07) << 5) | (threshold & 0x1F))
 	
 	def getFIFOSamples(self):
-		return self.I2Cbus.read_byte_data(xgAddr, FIFO_SRC & 0x3F)
+		return self.I2Cbus.read_byte_data(self.xgAddr, FIFO_SRC & 0x3F)
 
 	def constrainScales(self):
 		if ( (self.settings.gyro.scale != 245) & (self.settings.gyro.scale != 500) & (self.settings.gyro.scale != 2000)):
