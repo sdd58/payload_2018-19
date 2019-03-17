@@ -425,7 +425,7 @@ class LSM9DS1:
 		return self.aRes * accel
 
 	def calcGyro(self, gyro):
-        return self.gRes * gyro
+                return self.gRes * gyro
 	
 	def calcaRes(self):
 		if (self.settings.accel.scale == 2):
