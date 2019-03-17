@@ -17,7 +17,6 @@ SENSITIVITY_MAGNETOMETER_12  = 0.00043
 SENSITIVITY_MAGNETOMETER_16  = 0.00058
 
 class LSM9DS1:
-
 	def __init__(self, interface, xgAddr, mAddr):
 
 		I2Cbus = SMBus(1)
@@ -124,7 +123,6 @@ class LSM9DS1:
 		_autoCalc = False
 
 	def begin(self):
-		
 		constrainScales()
 		# Once we have the scale values, we can calculate the resolution
 		# of each sensor. That's what these functions are for. One for each sensor
@@ -145,7 +143,6 @@ class LSM9DS1:
 		return True
 
 	def initAccel(self):
-
 		tempRegValue = 0
 
 		if (settings.accel.enableZ):
@@ -258,15 +255,14 @@ class LSM9DS1:
 		return (status & (1<<0))
 
 	def gyroAvailable(self):
-    	status = I2Cbus.read_byte_data(xgAddr, STATUS_REG_1)
-    	return (status & (1<<0))
+                status = I2Cbus.read_byte_data(xgAddr, STATUS_REG_1)
+                return (status & (1<<0))
 
 	def tempAvailable(self):
-    	status = I2Cbus.read_byte_data(xgAddr, STATUS_REG_1)
-    	return ((status & (1<<2)) >> 2)
+                status = I2Cbus.read_byte_data(xgAddr, STATUS_REG_1)
+                return ((status & (1<<2)) >> 2)
 
 	def calibrate(self, autoCalc):
-
 	 	data = [0, 0, 0, 0, 0, 0]
 	 	samples = 0
 
@@ -301,7 +297,6 @@ class LSM9DS1:
 	 		_autoCalc = True
 
 	def readAccel(self):
-		
 		temp = I2Cbus.read_i2c_block_data(xgAddr, OUT_X_L_XL, 6)
 
 		ax = (temp[1] << 8 | temp[0])
@@ -330,7 +325,6 @@ class LSM9DS1:
 		temperature = offset + ((((int)temp[1] << 8) | temp[0]) >> 8)
 
 	def setGyroScale(self, gScl) :
-
 	 	ctrl1RegValue = I2Cbus.read_byte_data(xgAddr, CTRL_REG1_G) & 0xE7
 
 	 	if (gScl == 500):
@@ -394,7 +388,7 @@ class LSM9DS1:
 		return aRes * accel
 
 	def calcGyro(self, gyro):
-    	return gRes * gyro
+                return gRes * gyro
 	
 	def calcaRes(self):
 		if (settings.accel.scale == 2):
@@ -409,24 +403,24 @@ class LSM9DS1:
 			break
 	
 	def calcgRes(self):
-    	if settings.gyro.scale == 245:
-        	gRes = SENSITIVITY_GYROSCOPE_245
-    	elif settings.gyro.scale == 500:
-        	gRes = SENSITIVITY_GYROSCOPE_500
-    	elif settings.gyro.scale == 2000:
-        	gRes = SENSITIVITY_GYROSCOPE_2000
-    	else:
-        	return
+                if settings.gyro.scale == 245:
+                        gRes = SENSITIVITY_GYROSCOPE_245
+                elif settings.gyro.scale == 500:
+                        gRes = SENSITIVITY_GYROSCOPE_500
+                elif settings.gyro.scale == 2000:
+                        gRes = SENSITIVITY_GYROSCOPE_2000
+                else:
+                        return
 	
 	def calcmRes(self):
-    	if settings.mag.scale == 4:
-        	mRes = SENSITIVTY_MAGNETOMETER_4
-    	elif settings.mag.scale == 8:
-        	mRes = SENSITIVITY_MAGNETOMETER_8
-    	elif settings.mag.scale == 12:
-        	mRes = SENSITIVITY_MAGNETOMETER_12
-    	elif settings.mag.scale == 16:
-        	mRes = SENSITIVITY_MAGNETOMETER_16
+                if settings.mag.scale == 4:
+                        mRes = SENSITIVTY_MAGNETOMETER_4
+                elif settings.mag.scale == 8:
+                        mRes = SENSITIVITY_MAGNETOMETER_8
+                elif settings.mag.scale == 12:
+                        mRes = SENSITIVITY_MAGNETOMETER_12
+                elif settings.mag.scale == 16:
+                        mRes = SENSITIVITY_MAGNETOMETER_16
 
 	def enableFIFO(self, enable):
 		temp = I2Cbus.read_byte_data(xgAddr, CTRL_REG9)
