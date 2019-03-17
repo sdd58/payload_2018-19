@@ -400,7 +400,7 @@ class LSM9DS1:
 		elif (settings.accel.scale == 16):
 			aRes = SENSITIVITY_ACCELEROMETER_16
 		else:
-			break
+                        return
 	
 	def calcgRes(self):
                 if settings.gyro.scale == 245:
