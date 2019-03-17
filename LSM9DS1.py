@@ -168,8 +168,8 @@ class LSM9DS1:
 		#calcmRes() # Calculate Gs / ADC tick, stored in mRes variable
 		self.calcaRes() # Calculate g / ADC tick, stored in aRes variable
 
-		who_am_i_XG = self.I2Cbus.read_byte_data(self.xgAddr,reg.WHO_AM_I_XG)
-		who_am_i_M  = self.I2Cbus.read_byte_data(self.mAddr, reg.WHO_AM_I_M)
+		who_am_i_XG = self.I2Cbus.read_byte_data(self.xgAddr, WHO_AM_I_XG)
+		who_am_i_M  = self.I2Cbus.read_byte_data(self.mAddr, WHO_AM_I_M)
 
 		if ( who_am_i_XG != WHO_AM_I_AG_RSP | who_am_i_M != WHO_AM_I_M_RSP):
 			return False
