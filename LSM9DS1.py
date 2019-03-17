@@ -330,7 +330,7 @@ class LSM9DS1:
 	 	if (gScl == 500):
 	 		ctrl1RegValue |= (0x1 << 3)
 	 		settings.gyro.scale = 500
-	 	elif(gScl = 2000):
+	 	elif(gScl == 2000):
 	 		ctrl1RegValue |= (0x3 << 3)
 	 		settings.gyro.scale = 2000
 	 	else:
