@@ -288,16 +288,16 @@ class LSM9DS1:
 		self.I2Cbus.write_byte_data(self.xgAddr, ORIENT_CFG_G, tempRegValue)
 		
 	def accelAvailable(self):
-		status = self.I2Cbus.read_byte_data(self.xgAddr, STATUS_REG_1)
-		return (status & (1<<0))
+			status = self.I2Cbus.read_byte_data(self.xgAddr, STATUS_REG_1)
+			return (status & (1<<0))
 
 	def gyroAvailable(self):
-        status = self.I2Cbus.read_byte_data(self.xgAddr, STATUS_REG_1)
-        return (status & (1<<0))
+        	status = self.I2Cbus.read_byte_data(self.xgAddr, STATUS_REG_1)
+        	return (status & (1<<0))
 
 	def tempAvailable(self):
-        status = self.I2Cbus.read_byte_data(self.xgAddr, STATUS_REG_1)
-        return ((status & (1<<2)) >> 2)
+        	status = self.I2Cbus.read_byte_data(self.xgAddr, STATUS_REG_1)
+        	return ((status & (1<<2)) >> 2)
 
 	def calibrate(self, autoCalc):
 	 	data = [0, 0, 0, 0, 0, 0]
