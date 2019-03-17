@@ -426,7 +426,7 @@ class LSM9DS1:
 		temp = I2Cbus.read_byte_data(xgAddr, CTRL_REG9)
 		if (enable):
 			temp |= (1<<1)
-		else
+		else:
 			temp &= ~(1<<1)
 		I2Cbus.write_byte_data(xgAddr, CTRL_REG9, temp)
 
