@@ -17,10 +17,13 @@ SENSITIVITY_MAGNETOMETER_12  = 0.00043
 SENSITIVITY_MAGNETOMETER_16  = 0.00058
 
 class LSM9DS1:
+
+	I2Cbus = SMBus(1)
+	settings = IMUSettings
+
 	def __init__(self, interface, xgAddr, mAddr):
 
-		I2Cbus = SMBus(1)
-		settings = IMUSettings
+		
 
 		settings.device.commInterface = interface
 		settings.device.agAddress = xgAddr
