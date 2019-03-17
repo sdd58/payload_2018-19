@@ -322,7 +322,7 @@ class LSM9DS1:
 		temp = I2Cbus.read_i2c_block_data(xgAddr, OUT_TEMP_L, 2) # We'll read two bytes from the temperature sensor into temp	
 
 		offset = 25 # Per datasheet sensor outputs 0 typically @ 25 degrees centigrade
-		temperature = offset + ((((int)temp[1] << 8) | temp[0]) >> 8)
+		temperature = offset + (((temp[1] << 8) | temp[0]) >> 8)
 
 	def setGyroScale(self, gScl) :
 	 	ctrl1RegValue = I2Cbus.read_byte_data(xgAddr, CTRL_REG1_G) & 0xE7
