@@ -288,8 +288,8 @@ class LSM9DS1:
 		self.I2Cbus.write_byte_data(self.xgAddr, ORIENT_CFG_G, tempRegValue)
 		
 	def accelAvailable(self):
-			status = self.I2Cbus.read_byte_data(self.xgAddr, STATUS_REG_1)
-			return (status & (1<<0))
+		status = self.I2Cbus.read_byte_data(self.xgAddr, STATUS_REG_1)
+		return (status & (1<<0))
 
 	def gyroAvailable(self):
         	status = self.I2Cbus.read_byte_data(self.xgAddr, STATUS_REG_1)
@@ -340,9 +340,9 @@ class LSM9DS1:
 		self.ay = (temp[3] << 8 | temp[2])
 		self.az = (temp[5] << 8 | temp[4])
 		if (self._autoCalc):
-            self.ax -= self.aBiasRaw[0]
-            self.ay -= self.aBiasRaw[1]
-            self.az -= self.aBiasRaw[2]
+                    self.ax -= self.aBiasRaw[0]
+                    self.ay -= self.aBiasRaw[1]
+                    self.az -= self.aBiasRaw[2]
 
 	def readGyro(self):
 		temp = self.I2Cbus.read_i2c_block_data(self.xgAddr, OUT_X_L_G, 6) # We'll read six bytes from the gyro into temp
@@ -437,7 +437,7 @@ class LSM9DS1:
 		elif (self.settings.accel.scale == 16):
 			self.aRes = SENSITIVITY_ACCELEROMETER_16
 		else:
-        	return
+                        return
 	
 	def calcgRes(self):
                 if self.settings.gyro.scale == 245:
