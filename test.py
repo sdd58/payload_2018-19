@@ -2,7 +2,11 @@ from LSM9DS1 import *
 import time
 
 
+##TODO##
+#Make the gyroscope polling work
 
+##TODO EVENTUALLY##
+#Set accelerometer interupts up to trigger upon launch of the rocket1
 
 imu = LSM9DS1(1, 0x6b, 0x1e)
 imu.begin()
@@ -32,13 +36,11 @@ while(1):
 	   #  	a_z = imu.calcAccel(imu.az)
 
     if (imu.gyroAvailable()):
-
-    		imu.readGyro()
-
-	    	#Update the local variables
-			g_x = imu.calcGyro(imu.gx)
-	    	g_y = imu.calcGyro(imu.gy)
-	    	g_z = imu.calcGyro(imu.gz)
+    	imu.readGyro()
+	    #Update the local variables
+		g_x = imu.calcGyro(imu.gx)
+	    g_y = imu.calcGyro(imu.gy)
+	    g_z = imu.calcGyro(imu.gz)
     
     #print("Acceleration: [",a_x,",",a_y,",",a_z,"]")
     print("Gyroscope: [",g_x,",",g_y,",",g_z,"]")
