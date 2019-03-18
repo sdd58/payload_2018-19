@@ -309,7 +309,7 @@ class LSM9DS1:
         while (samples < 0x1F):
             samples = self.I2Cbus.read_byte_data(self.xgAddr, FIFO_SRC) & 0x3F
 
-        for ii in samples:
+        for ii in range(samples):
             self.readGyro()
             self.gBiasRawTemp[0] += self.gx
             self.gBiasRawTemp[1] += self.gy
