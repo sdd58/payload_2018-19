@@ -305,7 +305,7 @@ class LSM9DS1:
         self.gBiasRawTemp = [0, 0, 0]
 
         self.enableFIFO(True)
-        self.setFIFO(FIFO_THS, 0x1F)
+        self.setFIFO(1, 0x1F)
         while (samples < 0x1F):
             samples = self.I2Cbus.read_byte_data(self.xgAddr, FIFO_SRC) & 0x3F
 
@@ -327,7 +327,7 @@ class LSM9DS1:
             self.aBias[ii] = self.calcAccel(self.aBiasRaw[ii])
 
         self.enableFIFO(False)
-        self.setFIFO(FIFO_OFF, 0x00)
+        self.setFIFO(0, 0x00)
 
         if (autoCalc):
             self._autoCalc = True
@@ -359,7 +359,7 @@ class LSM9DS1:
         # We'll read two bytes from the temperature sensor into temp
         temp = self.I2Cbus.read_i2c_block_data(self.xgAddr, OUT_TEMP_L, 2)
 
-        offset = 25  # Per datasheet sensor outputs 0 typically @ 25 degrees centigrade
+        offset = 25  # Per datasheet sensor outputs 0 typically @ 25 degrees 
         self.Temperature = offset + (((temp[1] << 8) | temp[0]) >> 8)
 
     def setGyroScale(self, gScl):
