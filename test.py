@@ -15,6 +15,8 @@ imu.initGyro()
 # imu.setAccelScale(2)
 imu.setGyroScale(2)
 
+imu.calibrate(True)
+
 a_x = None
 a_y = None
 a_z = None

@@ -471,8 +471,7 @@ class LSM9DS1:
 
     def setFIFO(self, fifomode, fifoThs):
         threshold = fifoThs if (fifoThs <= 0x1F) else 0x1F
-        self.I2Cbus.write_byte_data(
-            FIFO_CTRL, ((fifomode & 0x07) << 5) | (threshold & 0x1F))
+        self.I2Cbus.write_byte_data(self.xgAddr, FIFO_CTRL, ((fifomode & 0x07) << 5) | (threshold & 0x1F))
 
     def getFIFOSamples(self):
         return self.I2Cbus.read_byte_data(self.xgAddr, FIFO_SRC & 0x3F)
