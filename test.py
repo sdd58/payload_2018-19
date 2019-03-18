@@ -24,21 +24,21 @@ g_z = None
 while(1):
 
     if (imu.accelAvailable()):
-        imu.readAccel()
+        	imu.readAccel()
 
-        #Update the local variables
-        a_x = imu.calcAccel(imu.ax)
-    	a_y = imu.calcAccel(imu.ay)
-    	a_z = imu.calcAccel(imu.az)
+	        #Update the local variables
+	        a_x = imu.calcAccel(imu.ax)
+	    	a_y = imu.calcAccel(imu.ay)
+	    	a_z = imu.calcAccel(imu.az)
 
     if (imu.gyroAvailable()):
 
-    	imu.readGyro()
+    		imu.readGyro()
 
-    	#Update the local variables
-		g_x = imu.calcGyro(imu.gx)
-    	g_y = imu.calcGyro(imu.gy)
-    	g_z = imu.calcGyro(imu.gz)
+	    	#Update the local variables
+			g_x = imu.calcGyro(imu.gx)
+	    	g_y = imu.calcGyro(imu.gy)
+	    	g_z = imu.calcGyro(imu.gz)
     
     print("Acceleration: [",a_x,",",a_y,",",a_z,"]")
     print("Gyroscope: [",g_x,",",g_y,",",g_z,"]")
