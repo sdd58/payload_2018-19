@@ -322,7 +322,7 @@ class LSM9DS1:
 
         for ii in range(3):
             self.gBiasRaw[ii] = self.gBiasRawTemp[ii] / samples
-            self.gBias[ii] = self.calcGyro(gBiasRaw[ii])
+            self.gBias[ii] = self.calcGyro(self.gBiasRaw[ii])
             self.aBiasRaw[ii] = self.aBiasRawTemp[ii] / samples
             self.aBias[ii] = self.calcAccel(self.aBiasRaw[ii])
 
