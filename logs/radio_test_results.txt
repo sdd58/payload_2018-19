@@ -1,0 +1,170 @@
+
+------------------------SHUTDOWN-----------------------------------
+Starting loop...
+
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Sending...
+
+No Ack Recieved
+
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Sending...
+
+No Ack Recieved
+
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Sending...
+
+No Ack Recieved
+
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Sending...
+
+No Ack Recieved
+
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Sending...
+
+No Ack Recieved
+
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+
+------------------------SHUTDOWN-----------------------------------
+Starting loop...
+
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Sending...
+
+No Ack Recieved
+
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Sending...
+
+No Ack Recieved
+
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Sending...
+
+No Ack Recieved
+
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Sending...
+
+No Ack Recieved
+
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Sending...
+
+No Ack Recieved
+
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+Listening... 0 RX
+
+------------------------SHUTDOWN-----------------------------------
